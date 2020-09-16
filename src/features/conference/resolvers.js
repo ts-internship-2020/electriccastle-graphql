@@ -1,4 +1,15 @@
+const { randomCharacters } = require("../../utils/functions");
+
 const conferenceResolvers = {
+
+    Mutation: {
+        attend: async (_parent, { input }, { dataSources }, _info) => {
+            const updateInput = { ...input, statusId: 3 /* Attended */ }
+            const statusId = await dataSources.conferenceDb.updateConferenceXAttendee(updateInput);
+            return statusId ? randomCharacters(10) : null
+        }
+    },
+
     Query: {
         conferenceList: async (_parent, { pager, filters }, { dataSources }, _info) => {
             const data = await dataSources.conferenceDb.getConferenceList(pager, filters);

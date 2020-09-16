@@ -84,6 +84,15 @@ extend type Query {
   countyList: [County!]!
   cityList: [City!]!
 }
+
+input Attendee {
+    attendeeEmail: String!
+    conferenceId: ID!
+}
+
+extend type Mutation {
+  attend(input: Attendee!): String    
+}
 `;
 
 module.exports = conferenceTypeDefs;

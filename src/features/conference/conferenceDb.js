@@ -50,47 +50,74 @@ class ConferenceDb extends SQLDataSource {
     
     async getTypeList() {
         const data = await this.knex
-          .select(
-            "Id",
-            "Name",
-            "Code"
-        )
-        .from("DictionaryConferenceType")
+            .select(
+                "Id",
+                "Name",
+                "Code"
+            )
+            .from("DictionaryConferenceType")
         return data;
     }
     
     async getCountryList() {
         const data = await this.knex
-        .select(
-            "Id",
-            "Name",
-            "Code"
-        )
-        .from("DictionaryCountry")
+            .select(
+                "Id",
+                "Name",
+                "Code"
+            )
+            .from("DictionaryCountry")
         return data;
     }
     
     async getCountyList() {
         const data = await this.knex
-          .select(
-            "Id",
-            "Name",
-            "Code"
-        )
-        .from("DictionaryCounty")
+            .select(
+                "Id",
+                "Name",
+                "Code"
+            )
+            .from("DictionaryCounty")
         return data;
-      }
+    }
     
       async getCityList() {
         const data = await this.knex
-          .select(
-            "Id",
-            "Name",
-            "Code"
-          )
-          .from("DictionaryCity")
+            .select(
+                "Id",
+                "Name",
+                "Code"
+            )
+            .from("DictionaryCity")
         return data;
-      }
+    }
+
+    async updateConferenceXAttendee({ attendeeEmail, conferenceId, statusId }) {
+        const current = await this.knex
+            .select("Id", "AttendeeEmail", "ConferenceId")
+            .from("ConferenceXAttendee")
+            .where("AttendeeEmail", attendeeEmail)
+            .andWhere("ConferenceId", conferenceId)
+            .first()
+    
+        const attendeeInfo = {
+            AttendeeEmail: attendeeEmail,
+            ConferenceId: conferenceId,
+            StatusId: statusId
+        }
+
+        let result
+        if (current && current.id) {
+            result = await this.knex("ConferenceXAttendee")
+                .update(attendeeInfo, "StatusId")
+                .where("Id", current.id)
+        } else {
+            result = await this.knex("ConferenceXAttendee")
+                .returning("StatusId")
+                .insert(attendeeInfo);
+        }
+        return result[0]
+    }
 }
 
 module.exports = ConferenceDb;
