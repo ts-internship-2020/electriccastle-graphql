@@ -7,11 +7,13 @@ type Type {
   name: String!
   code: String
 }
+
 type Category {
   id: Int!
   name: String!
   code: String
 }
+
 type Country {
   id: Int!
   name: String!
@@ -90,9 +92,52 @@ input Attendee {
     conferenceId: ID!
 }
 
+input ConferenceInput {
+  id: ID
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
+  organizerEmail: String!
+  type: TypeInput
+  category: CategoryInput
+  location: LocationInput!
+  speakers: [SpeakerInput!]!
+  deletedSpeakers: [ID]
+}
+
+input LocationInput {
+  id: ID
+  name: String
+  address: String
+  latitude: String
+  longitude: String
+  cityId: ID!
+  countyId: ID!
+  countryId: ID!
+}
+
+input SpeakerInput {
+  id: ID
+  name: String
+  isMainSpeaker: Boolean
+  nationality: String
+  rating: Float
+}
+
+input TypeInput {
+  id: Int!
+  name: String!
+}
+
+input CategoryInput {
+  id: Int!
+  name: String!
+}
+
 extend type Mutation {
   attend(input: Attendee!): String
   withdraw(input: Attendee!): String
+  saveConference(input: ConferenceInput!): Conference!
 }
 `;
 

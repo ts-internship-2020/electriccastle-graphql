@@ -13,6 +13,27 @@ const conferenceResolvers = {
             const updateInput = { ...input, statusId: 2 /* Withdrawn */ }
             const statusId = await dataSources.conferenceDb.updateConferenceXAttendee(updateInput);
             return statusId
+        },
+
+        saveConference: async (_parent, { input }, { dataSources }, _info) => {
+            const location = await dataSources.conferenceDb.updateLocation(input.location);
+            const updatedConference = await dataSources.conferenceDb.updateConference({ ...input, location })
+        
+            const speakers = await Promise.all(input.speakers.map(async speaker => {
+                const updatedSpeaker = await dataSources.conferenceDb.updateSpeaker(speaker);
+                const isMainSpeaker = await dataSources.conferenceDb.updateConferenceXSpeaker(
+                    {
+                        speakerId: updatedSpeaker.id,
+                        isMainSpeaker: speaker.isMainSpeaker,
+                        conferenceId: updatedConference.id
+                    }
+                );
+                return { ...updatedSpeaker, isMainSpeaker }
+            }))
+        
+            input.deletedSpeakers.length > 0 && await dataSources.conferenceDb.deleteSpeaker(input.deletedSpeakers)
+        
+            return { ...updatedConference, location, speakers }
         }
     },
 
