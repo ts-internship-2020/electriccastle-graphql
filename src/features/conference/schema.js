@@ -91,7 +91,8 @@ input Attendee {
 }
 
 extend type Mutation {
-  attend(input: Attendee!): String    
+  attend(input: Attendee!): String
+  withdraw(input: Attendee!): String
 }
 `;
 

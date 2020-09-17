@@ -7,6 +7,12 @@ const conferenceResolvers = {
             const updateInput = { ...input, statusId: 3 /* Attended */ }
             const statusId = await dataSources.conferenceDb.updateConferenceXAttendee(updateInput);
             return statusId ? randomCharacters(10) : null
+        },
+
+        withdraw: async (_parent, { input }, { dataSources }, _info) => {
+            const updateInput = { ...input, statusId: 2 /* Withdrawn */ }
+            const statusId = await dataSources.conferenceDb.updateConferenceXAttendee(updateInput);
+            return statusId
         }
     },
 
